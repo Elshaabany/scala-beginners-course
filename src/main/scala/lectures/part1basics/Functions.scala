@@ -29,6 +29,7 @@ object Functions extends App {
     else aString + repeat(aString, n - 1)
   }
 
+  println(repeat("abc", 3))
   // scala can have functions inside function
   // return type can be inferred form the inside function
   def aBigFunction(a: Int, b: Int) = {
@@ -45,11 +46,11 @@ object Functions extends App {
   println(sayHi("eslam", 25))
 
   // 2. factorial function
-  def factorial(n: Int): Int =
-    if(n == 1) 1
+  def factorial(n: Long): Long =
+    if(n <= 1) 1
     else n * factorial(n - 1)
 
-  println(factorial(5))
+  println(factorial(100))
 
   // 3. fibonacci function
   def fibonacci(n: Int): Int =
