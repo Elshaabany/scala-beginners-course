@@ -1,7 +1,7 @@
 package exercises
 
 
-abstract class MyList {
+abstract class MyList[+A] {
   /*
          head = first element of  the  list
          tail = remainder of the list
@@ -10,27 +10,27 @@ abstract class MyList {
          toString => a string representation of the list
     */
 
-  def head: Int
-  def tail: MyList
+  def head: A
+  def tail: MyList[A]
   def isEmpty: Boolean
-  def add(value: Int): MyList
+  def add[B >: A](value: B): MyList[B]
   def printElements: String
   override def toString: String = "[" + printElements + "]"
 }
 
-object Empty extends MyList {
-  def head: Int = throw new NoSuchElementException
-  def tail: MyList = throw new NoSuchElementException
+object Empty extends MyList[Nothing] {
+  def head: Nothing = throw new NoSuchElementException
+  def tail: MyList[Nothing] = throw new NoSuchElementException
   def isEmpty: Boolean = true
-  def add(value: Int): MyList = new cons(value, this)
+  def add[B >: Nothing](value: B): MyList[B] = new cons(value, this)
   def printElements: String = ""
 }
 
-class cons(h: Int, t: MyList) extends MyList {
-  def head: Int = h
-  def tail: MyList = t
+class cons[+A](h: A, t: MyList[A]) extends MyList[A] {
+  def head: A = h
+  def tail: MyList[A] = t
   def isEmpty: Boolean = false
-  def add(value: Int): MyList = new cons(value, this)
+  def add[B >: A](value: B): MyList[B] = new cons(value, this)
   def printElements: String =
     if (t.isEmpty) "" + h
     else s"$h ${t.printElements}"
@@ -38,9 +38,12 @@ class cons(h: Int, t: MyList) extends MyList {
 
 object test extends App {
 
-  val list = new cons(1, new cons(2 , new cons (3, Empty)))
-  println(list.add(4).head)
-  println(list.isEmpty)
+  val listOfInt: MyList[Int] = new cons(1, new cons(2 , new cons (3, Empty)))
+  val listOfString: MyList[String] = new cons("hello, ", new cons( "world ", new cons ("from scala", Empty)))
+  println(listOfInt.add(4).head)
+  println(listOfString.isEmpty)
 
-  println(list.toString)
+  println(listOfInt.toString)
+  println(listOfString.toString)
+
 }
