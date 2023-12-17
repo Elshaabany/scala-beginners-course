@@ -77,20 +77,14 @@ object test extends App {
   println(listOfInt.toString)
   println(listOfString.toString)
 
-  println(listOfInt.map(new (Int => Int) {
-    override def apply(elem: Int): Int = elem * 2
-  }).toString)
+  println(listOfInt.map(_ * 2).toString)
 
-  println(listOfInt.filter(new Function[Int, Boolean] {
-    override def apply(elem: Int): Boolean = elem % 2 == 0
-  }).toString)
+  println(listOfInt.filter(_ % 2 == 0).toString)
 
   val anotherListOfInt = new Cons(10, new Cons(20, new Cons(30, Empty)))
   println(listOfInt ++ anotherListOfInt)
   
-  println(listOfInt.flatMap(new (Int => MyList[Int]) {
-    override def apply(elem: Int): MyList[Int] = new Cons(elem, new Cons(elem + 1, Empty))
-  }) )
+  println(listOfInt.flatMap( elem => new Cons(elem, new Cons(elem + 1, Empty)) ))
 
   println(listOfInt == cloneListOfInt)
 
