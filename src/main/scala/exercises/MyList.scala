@@ -21,6 +21,15 @@ abstract class MyList[+A] {
   def flatMap[B](transformer: A => MyList[B]): MyList[B]
   def filter(predicate: A => Boolean): MyList[A]
   def ++[B >: A](list: MyList[B]): MyList[B]
+
+  // HOFs
+  def foreach(f: A => Unit): Unit
+  def sort(compare: (A, A) => Int): MyList[A]
+
+  def zipWith[B, C](list: MyList[B], zip: (A, B) => C): MyList[C]
+
+  def fold[B](start: B)(operator: (B, A) => B): B
+
 }
 
 case object Empty extends MyList[Nothing] {
@@ -38,7 +47,15 @@ case object Empty extends MyList[Nothing] {
 
   def ++[B >: Nothing](list: MyList[B]): MyList[B] = list
 
+  def foreach(f: Nothing => Unit): Unit = ()
 
+  def sort(compare: (Nothing, Nothing) => Int): MyList[Nothing] = Empty
+
+  def zipWith[B, C](list: MyList[B], zip: (Nothing, B) => C): MyList[C] =
+    if(!list.isEmpty) throw new RuntimeException("Lists do not have the same length")
+    else Empty
+
+  def fold[B](start: B)(operator: (B, Nothing) => B): B = start
 }
 
 case class Cons[+A](h: A, t: MyList[A]) extends MyList[A] {
@@ -63,6 +80,26 @@ case class Cons[+A](h: A, t: MyList[A]) extends MyList[A] {
 
   def ++[B >: A](list: MyList[B]): MyList[B] = new Cons(h, t ++ list)
 
+  def foreach(f: A => Unit): Unit =
+    f(h)
+    t.foreach(f)
+
+  def sort(compare: (A, A) => Int): MyList[A] = {
+    def insert(x: A, sortedlist: MyList[A]): MyList[A] =
+      if(sortedlist.isEmpty) new Cons(x, Empty)
+      else if (compare(x, sortedlist.head) <= 0) new Cons(x, sortedlist)
+      else new Cons(sortedlist.head, insert(x, sortedlist.tail))
+
+    insert(h, t.sort(compare))
+  }
+
+  def zipWith[B, C](list: MyList[B], zip: (A, B) => C): MyList[C] =
+    if (list.isEmpty) throw new RuntimeException("Lists do not have the same length")
+    else new Cons(zip(h, list.head), t.zipWith(list.tail, zip))
+
+  def fold[B](start: B)(operator: (B, A) => B): B = {
+    t.fold(operator(start, h))(operator)
+  }
 }
 
 
@@ -83,9 +120,14 @@ object test extends App {
 
   val anotherListOfInt = new Cons(10, new Cons(20, new Cons(30, Empty)))
   println(listOfInt ++ anotherListOfInt)
-  
+
   println(listOfInt.flatMap( elem => new Cons(elem, new Cons(elem + 1, Empty)) ))
 
   println(listOfInt == cloneListOfInt)
+
+
+  listOfInt.foreach(println)
+  println(listOfInt.sort( (x, y) => y - x))
+  println(anotherListOfInt.zipWith(listOfString, (x, y) => s"$x-$y"))
 
 }
