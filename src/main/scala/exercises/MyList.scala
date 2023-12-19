@@ -130,4 +130,16 @@ object test extends App {
   println(listOfInt.sort( (x, y) => y - x))
   println(anotherListOfInt.zipWith(listOfString, (x, y) => s"$x-$y"))
 
+  // to make type to work with for comprehension
+  // it should implement these methods with theses signatures
+  //          map(f: A => B) => MyList[B]
+  //          filter(p: A => Boolean) => MyList[A]
+  //          flatMap(f: A => MyList[B]) => MyList[B]
+  val combinations = for {
+    n <- listOfInt
+    s <- listOfString
+  } yield s"$n $s"
+  
+  println(combinations)
+
 }
