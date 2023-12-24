@@ -12,9 +12,9 @@ object PatternsEverywhere extends App {
   }
 
   // for-comprehension uses match
-  val List = List(1, 2, 3, 4)
+  val aList = List(1, 2, 3, 4)
   val even = for {
-    x <- list if x % 2 == 0
+    x <- aList if x % 2 == 0
   } yield 10 * x
 
   // generators are based on pattern matching
@@ -26,19 +26,19 @@ object PatternsEverywhere extends App {
   println(b)
 
   // also based on pattern matching
-  val head :: tail = List
+  val head :: tail = aList
   println(head)
   println(tail)
   
   // partial function
-  val mappedList = list.map {
+  val mappedList = aList.map {
     case x if x % 2 == 0 => x + " is even"
     case 1 => "the one"
     case _ => "something else"
   } 
   // partial function literal
 
-  val mappedList2 = list.map { x =>
+  val mappedList2 = aList.map { x =>
     x match {
       case v if v % 2 == 0 => v + " is even"
       case 1 => "the one"
